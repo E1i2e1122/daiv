@@ -2,20 +2,20 @@ from typing import Unpack
 
 from automation.agents.agent import LlmAgent
 from automation.agents.models import Message
-from automation.coders.typings import RefactorInvoke
+from automation.coders.base import CodebaseCoder
+from automation.coders.typings import CodebaseInvoke
 from codebase.base import FileChange
 
-from .base import RefactorCoder
+from ..tools import CodeActionTools
 from .prompts import RefactorPrompts
-from .tools import CodeActionTools
 
 
-class SimpleRefactorCoder(RefactorCoder[RefactorInvoke, list[FileChange]]):
+class SimpleRefactorCoder(CodebaseCoder[CodebaseInvoke, list[FileChange]]):
     """
     A simple coder that takes the user input and generates the original and updated blocks.
     """
 
-    def invoke(self, *args, **kwargs: Unpack[RefactorInvoke]) -> list[FileChange]:
+    def invoke(self, *args, **kwargs: Unpack[CodebaseInvoke]) -> list[FileChange]:
         """
         Invoke the coder to generate the original and updated blocks from the user input.
         """
