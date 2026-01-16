@@ -75,6 +75,7 @@ def mock_repo_client():
             labels=["daiv"],
             web_url="https://test-repo.com/merge_requests/1",
             sha="testsha",
+            author=mock_client.current_user,
         )
         mock_client.update_or_create_merge_request.return_value = merge_request
         mock_client.get_merge_request.return_value = merge_request
