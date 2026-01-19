@@ -6,7 +6,7 @@ from unittest.mock import AsyncMock, Mock, patch
 import pytest
 from pydantic import SecretStr
 
-from codebase.base import ClientType, Repository, User
+from codebase.base import GitPlatform, MergeRequest, Repository, User
 from codebase.clients import RepoClient
 from codebase.conf import settings
 
@@ -17,7 +17,7 @@ def mock_settings():
     with (
         patch.object(settings, "GITLAB_WEBHOOK_SECRET", SecretStr("test_secret")),
         patch.object(settings, "GITHUB_WEBHOOK_SECRET", SecretStr("test_secret")),
-        patch.object(settings, "CLIENT", ClientType.GITLAB),
+        patch.object(settings, "CLIENT", GitPlatform.GITLAB),
     ):
         yield settings
 
@@ -37,7 +37,7 @@ def mock_repo_client():
         # Set up commonly used properties and methods with reasonable defaults
         mock_client.current_user = User(id=1, username="test-user", name="Test User")
         mock_client.codebase_url = "https://test-repo.com"
-        mock_client.client_slug = ClientType.GITLAB
+        mock_client.git_platform = GitPlatform.GITLAB
 
         # Mock basic repository operations
         mock_client.get_repository.return_value = Repository(
@@ -45,7 +45,7 @@ def mock_repo_client():
             slug="test/test-repo",
             name="test-repo",
             default_branch="main",
-            client=ClientType.GITLAB,
+            git_platform=GitPlatform.GITLAB,
             clone_url="https://test-repo.com",
         )
         mock_client.list_repositories.return_value = []
@@ -65,8 +65,20 @@ def mock_repo_client():
         mock_client.get_issue_related_merge_requests.return_value = []
 
         # Mock merge request operations
-        mock_client.update_or_create_merge_request.return_value = 1
-        mock_client.get_merge_request.return_value = Mock()
+        merge_request = MergeRequest(
+            repo_id="test/test-repo",
+            merge_request_id=1,
+            source_branch="feature/test",
+            target_branch="main",
+            title="Test merge request",
+            description="Test merge request description",
+            labels=["daiv"],
+            web_url="https://test-repo.com/merge_requests/1",
+            sha="testsha",
+            author=mock_client.current_user,
+        )
+        mock_client.update_or_create_merge_request.return_value = merge_request
+        mock_client.get_merge_request.return_value = merge_request
         mock_client.get_merge_request_latest_pipelines.return_value = []
         mock_client.get_merge_request_review_comments.return_value = []
         mock_client.get_merge_request_comments.return_value = []
