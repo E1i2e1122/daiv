@@ -37,7 +37,7 @@ dependencies = [
   "django-tasks-db==0.13.0",
   "fastmcp-slim[client]==4.1.5",
   "filetype==1.2.0",
-  "genai-prices==0.1.13",
+  "genai-prices==0.2.1",
   "get-docker-secret==2.0.0",
   "gitpython==3.2.1",
   "httpx==0.28.1",
